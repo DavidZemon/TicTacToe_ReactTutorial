@@ -38,16 +38,18 @@ class Board extends React.Component {
   }
 
   handleClick(i) {
-    // Make note of the move
-    const turns = this.state.turns.slice();
-    turns.push(new Move(i, this.currentPlayer()));
-    this.setState({turns: turns});
+    if (this.state.squares[i] == null) {
+      // Make note of the move
+      const turns = this.state.turns.slice();
+      turns.push(new Move(i, this.currentPlayer()));
+      this.setState({turns: turns});
 
-    // Set the move
-    const squares = this.state.squares.slice();
-    squares[i] = this.currentPlayer();
-    this.setState({turn: this.state.turn + 1});
-    this.setState({squares: squares});
+      // Set the move
+      const squares = this.state.squares.slice();
+      squares[i] = this.currentPlayer();
+      this.setState({turn: this.state.turn + 1});
+      this.setState({squares: squares});
+    }
   }
 
   render() {
