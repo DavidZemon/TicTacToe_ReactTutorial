@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Move {
-  constructor(square, player) {
-    this.square = square;
-    this.player = player;
+  constructor(readonly square: number, readonly player: string) {
   }
 }
 
-function Square(props) {
+interface SquareState {
+  onClick: any;
+  value: string;
+}
+
+function Square(props: SquareState): JSX.Element {
   return (
     <button className="square" onClick={props.onClick}>
       {props.value}
@@ -17,19 +20,27 @@ function Square(props) {
   )
 }
 
-class Board extends React.Component {
-  constructor(props) {
+interface BoardState {
+  turn: number;
+  turns: Array<Move>;
+  squares: Array<string>;
+  winner: string;
+}
+
+class Board extends React.Component<any, BoardState> {
+  static readonly PLAYERS: Array<string> = ['X', 'O'];
+
+  constructor(props: {}) {
     super(props);
-    this.players = ['X', 'O'];
     this.state = {
       turn: 0,
       turns: [],
-      squares: Array(9).fill(null),
-      winner: null
+      squares: Array(9).fill(''),
+      winner: ''
     }
   }
 
-  renderSquare(i) {
+  renderSquare(i: number): JSX.Element {
     return (
       <Square
         value={this.state.squares[i]}
@@ -38,8 +49,8 @@ class Board extends React.Component {
     );
   }
 
-  handleClick(i) {
-    if (null == this.state.squares[i] && null == this.state.winner) {
+  handleClick(i: number) {
+    if (!this.state.squares[i] && !this.state.winner) {
       // Make note of the move
       const turns = this.state.turns.slice();
       turns.push(new Move(i, this.currentPlayer()));
@@ -54,7 +65,7 @@ class Board extends React.Component {
     }
   }
 
-  render() {
+  render(): JSX.Element {
     const status = this.state.winner ? `Winner: ${this.state.winner}` : `Next player: ${this.currentPlayer()}`;
     return (
       <div>
@@ -73,10 +84,10 @@ class Board extends React.Component {
   }
 
   currentPlayer() {
-    return this.players[this.state.turn % 2];
+    return Board.PLAYERS[this.state.turn % 2];
   }
 
-  static calculateWinner(squares) {
+  static calculateWinner(squares: Array<string>): string {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -93,7 +104,7 @@ class Board extends React.Component {
         return squares[a];
       }
     }
-    return null;
+    return '';
   }
 }
 
